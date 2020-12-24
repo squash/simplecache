@@ -14,6 +14,9 @@ type LRU struct {
 func NewLRU(size int) *LRU
     NewLRU creates a new cache object with a soft maximum size.
 
+func (l *LRU) Delete(key interface{}) bool
+    Delete a single entry by key
+
 func (l *LRU) Dump() []interface{}
     Return the contents of the cache
 

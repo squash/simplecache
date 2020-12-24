@@ -74,6 +74,17 @@ func (l *LRU) Dump() []interface{} {
 	return i
 }
 
+// Delete a single entry by key
+func (l *LRU) Delete(key interface{}) bool {
+	l.lock.Lock()
+	_, ok := l.entries[key]
+	if ok {
+		delete(l.entries, key)
+	}
+	l.lock.Unlock()
+	return ok
+}
+
 // Flush cache entirely
 func (l *LRU) Flush() {
 	l.lock.Lock()
