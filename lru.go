@@ -85,6 +85,14 @@ func (l *LRU) Delete(key interface{}) bool {
 	return ok
 }
 
+// Count the number of entries in the cache
+func (l *LRU) Count() int {
+	l.lock.Lock()
+	tmp := len(l.entries)
+	l.lock.Unlock()
+	return tmp
+}
+
 // Flush cache entirely
 func (l *LRU) Flush() {
 	l.lock.Lock()
