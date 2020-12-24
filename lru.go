@@ -39,8 +39,8 @@ func (l *LRU) Store(key, value interface{}) {
 	e.lasthit = time.Now()
 	l.lock.Lock()
 	l.entries[key] = e
-	l.lock.Unlock()
 	l.collect()
+	l.lock.Unlock()
 }
 
 // Fetch grabs an entry from the cache
@@ -113,7 +113,6 @@ func (l *LRU) collect() {
 		return
 	}
 	var ages []age
-	l.lock.Lock()
 	for x := range l.entries {
 		var a age
 		a.key = x
@@ -126,5 +125,4 @@ func (l *LRU) collect() {
 	for x := l.purgeto; x < len(ages); x++ {
 		delete(l.entries, ages[x].key)
 	}
-	l.lock.Unlock()
 }
