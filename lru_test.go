@@ -2,6 +2,7 @@ package simplecache
 
 import (
 	"fmt"
+	"os"
 	"testing"
 )
 
@@ -11,7 +12,12 @@ type testdata struct {
 }
 
 var result interface{}
+var PopulatedCache *LRU
 
+func TestMain(m *testing.M) {
+	PopulatedCache = NewLRU(10000000)
+	os.Exit(m.Run())
+}
 func TestCache(t *testing.T) {
 	l := NewLRU(10)
 	for x := 0; x <= 20; x++ {
@@ -43,20 +49,15 @@ func TestCache(t *testing.T) {
 }
 
 func BenchmarkAdds(b *testing.B) {
-	l := NewLRU(b.N / 2)
+
 	for n := 0; n < b.N; n++ {
-		l.Store(fmt.Sprintf("%d", n), n)
+		PopulatedCache.Store(n, n)
 	}
 }
 
 func BenchmarkFetches(b *testing.B) {
-	var tmp interface{}
-	l := NewLRU(b.N)
 	for n := 0; n < b.N; n++ {
-		l.Store(fmt.Sprintf("%d", n), n)
+		result, _ = PopulatedCache.Fetch(n)
 	}
-	for n := 0; n < b.N; n++ {
-		tmp, _ = l.Fetch(fmt.Sprintf("%d", n))
-	}
-	result = tmp
+
 }

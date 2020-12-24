@@ -63,7 +63,7 @@ func (l *LRU) Peek(key interface{}) (interface{}, bool) {
 	return e.value, ok
 }
 
-// Return the contents of the cache
+// Dump return the contents of the cache as a slice
 func (l *LRU) Dump() []interface{} {
 	var i []interface{}
 	l.lock.Lock()
