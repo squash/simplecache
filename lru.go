@@ -11,7 +11,7 @@ import (
 // LRU is an instance of our LRU model cache
 type LRU struct {
 	entries   map[interface{}]cacheEntry
-	lock      sync.Mutex
+	lock      sync.RWMutex
 	sizelimit int
 	ages      []age
 	purgeto   int
@@ -45,32 +45,32 @@ func (l *LRU) Store(key, value interface{}) {
 
 // Fetch grabs an entry from the cache
 func (l *LRU) Fetch(key interface{}) (interface{}, bool) {
-	l.lock.Lock()
+	l.lock.RLock()
 	e, ok := l.entries[key]
 	if ok {
 		e.lasthit = time.Now()
 		l.entries[key] = e
 	}
-	l.lock.Unlock()
+	l.lock.RUnlock()
 	return e.value, ok
 }
 
 // Peek grabs the entry without updating it's last access time.
 func (l *LRU) Peek(key interface{}) (interface{}, bool) {
-	l.lock.Lock()
+	l.lock.RLock()
 	e, ok := l.entries[key]
-	l.lock.Unlock()
+	l.lock.RUnlock()
 	return e.value, ok
 }
 
 // Dump return the contents of the cache as a slice
 func (l *LRU) Dump() []interface{} {
 	var i []interface{}
-	l.lock.Lock()
+	l.lock.RLock()
 	for x := range l.entries {
 		i = append(i, l.entries[x].value)
 	}
-	l.lock.Unlock()
+	l.lock.RUnlock()
 	return i
 }
 
@@ -87,9 +87,9 @@ func (l *LRU) Delete(key interface{}) bool {
 
 // Count the number of entries in the cache
 func (l *LRU) Count() int {
-	l.lock.Lock()
+	l.lock.RLock()
 	tmp := len(l.entries)
-	l.lock.Unlock()
+	l.lock.RUnlock()
 	return tmp
 }
 
