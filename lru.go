@@ -47,11 +47,13 @@ func (l *LRU) Store(key, value interface{}) {
 func (l *LRU) Fetch(key interface{}) (interface{}, bool) {
 	l.lock.RLock()
 	e, ok := l.entries[key]
+	l.lock.RUnlock()
 	if ok {
 		e.lasthit = time.Now()
+		l.lock.Lock()
 		l.entries[key] = e
+		l.lock.Unlock()
 	}
-	l.lock.RUnlock()
 	return e.value, ok
 }
 
