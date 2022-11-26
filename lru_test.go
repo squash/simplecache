@@ -37,25 +37,26 @@ func TestCache(t *testing.T) {
 		t.Fatal("Cache entry 12 should exist")
 	}
 
-	var d testdata
+	//var d testdata
 	i, ok := l.Fetch("20")
 	if !ok {
 		t.Fatal("Cache entry 20 should exist")
 	}
-	d = i.(testdata)
+	d := i.(testdata)
 	if d.number != 20 {
 		t.Fatal("Cache entry 20 has wrong value")
 	}
 }
 
 func BenchmarkAdds(b *testing.B) {
-
+	b.ReportAllocs()
 	for n := 0; n < b.N; n++ {
 		PopulatedCache.Store(n, n)
 	}
 }
 
 func BenchmarkFetches(b *testing.B) {
+	b.ReportAllocs()
 	for n := 0; n < b.N; n++ {
 		result, _ = PopulatedCache.Fetch(n)
 	}

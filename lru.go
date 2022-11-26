@@ -13,7 +13,6 @@ type LRU struct {
 	entries   map[interface{}]cacheEntry
 	lock      sync.RWMutex
 	sizelimit int
-	ages      []age
 	purgeto   int
 }
 
@@ -110,7 +109,7 @@ type age struct {
 
 // collect enforces size maximums, in chunks. We'll purge to 90% full when we run so we're not running too often.
 func (l *LRU) collect() {
-	if len(l.entries) < l.sizelimit {
+	if l.sizelimit == 0 || len(l.entries) < l.sizelimit {
 		// We aren't full so let's not run
 		return
 	}
